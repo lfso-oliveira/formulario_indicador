@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Indicadores — Turnos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #1a222d;
+      --border: #2d3a4d;
+      --text: #e8eef5;
+      --muted: #8b9cb3;
+      --accent: #3d8bfd;
+      --accent-hover: #5a9fff;
+      --danger: #e85d5d;
+      --radius: 10px;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      font-family: "DM Sans", system-ui, sans-serif;
+      background: radial-gradient(ellipse 120% 80% at 50% -20%, #1e3a5f 0%, var(--bg) 55%);
+      color: var(--text);
+      line-height: 1.45;
+      padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(2rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+    }
+
+    .wrap { max-width: 720px; margin: 0 auto; }
+
+    h1 {
+      font-size: clamp(1.25rem, 4vw, 1.5rem);
+      font-weight: 600;
+      margin: 0 0 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .intro {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin: 0 0 1.25rem;
+      line-height: 1.5;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) + 2px);
+      padding: clamp(1rem, 4vw, 1.5rem);
+      box-shadow: var(--shadow);
+    }
+
+    .steps-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .steps-meta strong {
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .steps-dots {
+      display: flex;
+      gap: 0.35rem;
+    }
+
+    .steps-dots span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+    }
+
+    .steps-dots span.on {
+      background: var(--accent);
+      box-shadow: 0 0 0 2px rgba(61, 139, 253, 0.35);
+    }
+
+    .passo-titulo {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 0 0 0.35rem;
+    }
+
+    .passo-desc {
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin: 0 0 1rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .lbl-inline {
+      text-transform: none;
+      letter-spacing: 0;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="tel"],
+    input[type="time"] {
+      width: 100%;
+      min-height: 2.75rem;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.9375rem;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(61, 139, 253, 0.2);
+    }
+
+    .campo-capita {
+      margin-bottom: 1.25rem;
+    }
+
+    .nav-passos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      margin-top: 1.25rem;
+    }
+
+    .nav-passos .grow {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      min-height: 2.75rem;
+      padding: 0.6rem 1rem;
+      border: none;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .btn:active { transform: scale(0.98); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover { background: var(--accent-hover); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      color: var(--text);
+      border-color: var(--muted);
+    }
+
+    .btn-danger {
+      background: transparent;
+      color: var(--danger);
+      border: 1px solid rgba(232, 93, 93, 0.35);
+      padding: 0.45rem 0.75rem;
+      font-size: 0.82rem;
+      min-height: 2.5rem;
+    }
+
+    .btn-danger:hover {
+      background: rgba(232, 93, 93, 0.12);
+      border-color: var(--danger);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      -webkit-overflow-scrolling: touch;
+      background: var(--bg);
+    }
+
+    table.tabela-dia {
+      width: 100%;
+      min-width: 520px;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+
+    .tabela-dia th {
+      text-align: left;
+      padding: 0.65rem 0.5rem;
+      background: rgba(0, 0, 0, 0.2);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+    }
+
+    .tabela-dia th:last-child { border-right: none; }
+
+    .tabela-dia td {
+      padding: 0.5rem 0.45rem;
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      vertical-align: middle;
+      background: var(--surface);
+    }
+
+    .tabela-dia td:last-child { border-right: none; }
+    .tabela-dia tr:last-child td { border-bottom: none; }
+
+    .tabela-dia .col-time { min-width: 140px; width: 28%; }
+    .tabela-dia .col-acoes { width: 1%; white-space: nowrap; text-align: center; }
+
+    .time-pair {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      flex-wrap: nowrap;
+    }
+
+    .time-pair input[type="time"] {
+      flex: 1 1 0;
+      min-width: 0;
+      max-width: 7.5rem;
+      min-height: 2.5rem;
+    }
+
+    .time-pair span {
+      color: var(--muted);
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    .toolbar-dia {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .save-msg {
+      font-size: 0.875rem;
+      color: var(--muted);
+      min-height: 1.35em;
+      margin-top: 1rem;
+      padding: 0.5rem 0 0;
+    }
+
+    .save-msg.ok { color: #6ecf8f; }
+    .save-msg.err { color: var(--danger); }
+    .save-msg.warn { color: #e8c170; }
+
+    @media (max-width: 640px) {
+      .nav-passos {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .nav-passos .btn { width: 100%; }
+
+      table.tabela-dia {
+        min-width: 0;
+        display: block;
+      }
+
+      .tabela-dia thead { display: none; }
+
+      .tabela-dia tbody { display: block; }
+
+      .tabela-dia tr.linha-dia {
+        display: block;
+        margin-bottom: 0.85rem;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        background: var(--surface);
+      }
+
+      .tabela-dia td {
+        display: block;
+        width: 100% !important;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 0.75rem 0.9rem;
+      }
+
+      .tabela-dia td:last-child { border-bottom: none; }
+
+      .tabela-dia td[data-label]::before {
+        content: attr(data-label);
+        display: block;
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.45rem;
+      }
+
+      .time-pair { flex-wrap: wrap; }
+
+      .time-pair input[type="time"] {
+        flex: 1 1 calc(50% - 1rem);
+        max-width: none;
+        min-height: 3rem;
+        font-size: 1rem;
+      }
+
+      input[type="text"],
+      input[type="tel"] {
+        font-size: 1rem;
+        min-height: 3rem;
+      }
+
+      .tabela-dia .col-acoes .btn-remove-linha { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Planejamento de turnos</h1>
+    <p class="intro">Preencha por etapas: primeiro o capitão, depois uma tabela por dia (sexta, sábado e domingo).</p>
+
+    <form id="form-turnos" novalidate>
+      <div class="card">
+        <div class="steps-meta">
+          <strong id="step-label">Passo 1 de 4 — Capitão</strong>
+          <div class="steps-dots" id="steps-dots" aria-hidden="true"></div>
+        </div>
+
+        <section class="passo" data-passo="0" id="passo-0">
+          <h2 class="passo-titulo">Nome do capitão</h2>
+          <p class="passo-desc">Quem coordena estes turnos.</p>
+          <div class="campo-capita">
+            <label for="capitao" class="lbl-inline">Capitão</label>
+            <input type="text" id="capitao" name="capitao" placeholder="Ex.: João Silva" autocomplete="name" />
+          </div>
+          <div class="nav-passos">
+            <span class="grow"></span>
+            <button type="button" class="btn btn-ghost" id="btn-limpar">Limpar rascunho</button>
+            <button type="button" class="btn btn-primary" id="btn-continuar-0">Continuar →</button>
+          </div>
+        </section>
+
+        <section class="passo" data-passo="1" id="passo-1" hidden>
+          <h2 class="passo-titulo">Sexta-feira</h2>
+          <p class="passo-desc">Horários e indicadores só deste dia.</p>
+          <div class="toolbar-dia">
+            <button type="button" class="btn btn-primary btn-add-dia" data-dia="sexta">+ Turno (sexta)</button>
+          </div>
+          <div class="table-wrap">
+            <table class="tabela-dia" aria-label="Turnos de sexta-feira">
+              <thead>
+                <tr>
+                  <th class="col-time">Horário</th>
+                  <th>Nome</th>
+                  <th>Congregação</th>
+                  <th>Contato</th>
+                  <th class="col-acoes">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-sexta"></tbody>
+            </table>
+          </div>
+          <div class="nav-passos">
+            <button type="button" class="btn btn-ghost btn-voltar">← Anterior</button>
+            <span class="grow"></span>
+            <button type="button" class="btn btn-primary btn-avancar">Próximo →</button>
+          </div>
+        </section>
+
+        <section class="passo" data-passo="2" id="passo-2" hidden>
+          <h2 class="passo-titulo">Sábado</h2>
+          <p class="passo-desc">Horários e indicadores só do sábado.</p>
+          <div class="toolbar-dia">
+            <button type="button" class="btn btn-primary btn-add-dia" data-dia="sabado">+ Turno (sábado)</button>
+          </div>
+          <div class="table-wrap">
+            <table class="tabela-dia" aria-label="Turnos de sábado">
+              <thead>
+                <tr>
+                  <th class="col-time">Horário</th>
+                  <th>Nome</th>
+                  <th>Congregação</th>
+                  <th>Contato</th>
+                  <th class="col-acoes">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-sabado"></tbody>
+            </table>
+          </div>
+          <div class="nav-passos">
+            <button type="button" class="btn btn-ghost btn-voltar">← Anterior</button>
+            <span class="grow"></span>
+            <button type="button" class="btn btn-primary btn-avancar">Próximo →</button>
+          </div>
+        </section>
+
+        <section class="passo" data-passo="3" id="passo-3" hidden>
+          <h2 class="passo-titulo">Domingo</h2>
+          <p class="passo-desc">Último dia. Depois pode enviar.</p>
+          <div class="toolbar-dia">
+            <button type="button" class="btn btn-primary btn-add-dia" data-dia="domingo">+ Turno (domingo)</button>
+          </div>
+          <div class="table-wrap">
+            <table class="tabela-dia" aria-label="Turnos de domingo">
+              <thead>
+                <tr>
+                  <th class="col-time">Horário</th>
+                  <th>Nome</th>
+                  <th>Congregação</th>
+                  <th>Contato</th>
+                  <th class="col-acoes">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-domingo"></tbody>
+            </table>
+          </div>
+          <div class="nav-passos">
+            <button type="button" class="btn btn-ghost btn-voltar">← Anterior</button>
+            <span class="grow"></span>
+            <button type="button" class="btn btn-primary" id="btn-enviar">Enviar</button>
+          </div>
+        </section>
+
+        <p class="save-msg" id="save-msg" aria-live="polite"></p>
+      </div>
+    </form>
+  </div>
+
+  <template id="tpl-linha-dia">
+    <tr class="linha-dia">
+      <td class="col-time" data-label="Horário">
+        <div class="time-pair">
+          <input type="time" class="hora-inicio" aria-label="Início" />
+          <span>às</span>
+          <input type="time" class="hora-fim" aria-label="Fim" />
+        </div>
+      </td>
+      <td data-label="Nome">
+        <input type="text" class="nome" placeholder="Indicador" autocomplete="name" />
+      </td>
+      <td data-label="Congregação">
+        <input type="text" class="congregacao" placeholder="Congregação" />
+      </td>
+      <td data-label="Contato">
+        <input type="tel" class="contato" placeholder="Telefone" inputmode="tel" />
+      </td>
+      <td class="col-acoes">
+        <button type="button" class="btn btn-danger btn-remove-linha" aria-label="Remover turno">Remover</button>
+      </td>
+    </tr>
+  </template>
+
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8/dist/umd/supabase.min.js"></script>
+  <script>
+    (function () {
+      var DRAFT_KEY = "indicadores-rascunho-v4-etapas";
+      var TABLE = "indicadores_envios";
+      var DIAS = ["sexta", "sabado", "domingo"];
+      var TITULOS_ETAPA = [
+        "Passo 1 de 4 — Capitão",
+        "Passo 2 de 4 — Sexta-feira",
+        "Passo 3 de 4 — Sábado",
+        "Passo 4 de 4 — Domingo",
+      ];
+
+      var form = document.getElementById("form-turnos");
+      var capitao = document.getElementById("capitao");
+      var saveMsg = document.getElementById("save-msg");
+      var stepLabel = document.getElementById("step-label");
+      var stepsDots = document.getElementById("steps-dots");
+      var tpl = document.getElementById("tpl-linha-dia");
+      var supabaseClient = null;
+      var rascunhoTimer = null;
+      var etapa = 0;
+
+      var tbodies = {
+        sexta: document.getElementById("tbody-sexta"),
+        sabado: document.getElementById("tbody-sabado"),
+        domingo: document.getElementById("tbody-domingo"),
+      };
+
+      function getSupabaseClient() {
+        if (supabaseClient) return supabaseClient;
+        var cfg = window.INDICADORES_SUPABASE || {};
+        var url = (cfg.url || "").trim();
+        var key = (cfg.anonKey || "").trim();
+        if (!url || !key) return null;
+        if (!window.supabase || typeof window.supabase.createClient !== "function") return null;
+        supabaseClient = window.supabase.createClient(url, key);
+        return supabaseClient;
+      }
+
+      function initDots() {
+        stepsDots.innerHTML = "";
+        for (var i = 0; i < 4; i++) {
+          var s = document.createElement("span");
+          if (i === 0) s.className = "on";
+          stepsDots.appendChild(s);
+        }
+      }
+
+      function updateDots() {
+        var dots = stepsDots.querySelectorAll("span");
+        for (var i = 0; i < dots.length; i++) {
+          dots[i].className = i === etapa ? "on" : "";
+        }
+      }
+
+      function showPasso(n) {
+        etapa = Math.max(0, Math.min(3, n));
+        document.querySelectorAll(".passo").forEach(function (el) {
+          el.hidden = Number(el.getAttribute("data-passo")) !== etapa;
+        });
+        stepLabel.textContent = TITULOS_ETAPA[etapa];
+        updateDots();
+        agendarRascunho();
+      }
+
+      function linhaVazia() {
+        return { horaInicio: "", horaFim: "", nome: "", congregacao: "", contato: "" };
+      }
+
+      /** Formato novo: { sexta: [], sabado: [], domingo: [] } */
+      function normalizeLinhasParaDias(raw) {
+        if (!raw) return { sexta: [linhaVazia()], sabado: [linhaVazia()], domingo: [linhaVazia()] };
+        if (typeof raw === "string") {
+          try {
+            raw = JSON.parse(raw);
+          } catch (e) {
+            return { sexta: [linhaVazia()], sabado: [linhaVazia()], domingo: [linhaVazia()] };
+          }
+        }
+        if (raw && typeof raw === "object" && !Array.isArray(raw) && Array.isArray(raw.sexta)) {
+          var o = {
+            sexta: raw.sexta.length ? raw.sexta.slice() : [linhaVazia()],
+            sabado: raw.sabado && raw.sabado.length ? raw.sabado.slice() : [linhaVazia()],
+            domingo: raw.domingo && raw.domingo.length ? raw.domingo.slice() : [linhaVazia()],
+          };
+          return o;
+        }
+        if (Array.isArray(raw)) {
+          var out = { sexta: [], sabado: [], domingo: [] };
+          for (var i = 0; i < raw.length; i++) {
+            var row = raw[i] || {};
+            if (row.sexta && ("horaInicio" in row.sexta || "horaFim" in row.sexta)) {
+              out.sexta.push(Object.assign(linhaVazia(), row.sexta));
+              out.sabado.push(Object.assign(linhaVazia(), row.sabado || {}));
+              out.domingo.push(Object.assign(linhaVazia(), row.domingo || {}));
+            } else {
+              var hi = row.horaInicio || "";
+              var hf = row.horaFim || "";
+              out.sexta.push(Object.assign({ horaInicio: hi, horaFim: hf }, linhaVazia(), row.sexta || {}));
+              out.sabado.push(Object.assign({ horaInicio: hi, horaFim: hf }, linhaVazia(), row.sabado || {}));
+              out.domingo.push(Object.assign({ horaInicio: hi, horaFim: hf }, linhaVazia(), row.domingo || {}));
+            }
+          }
+          if (!out.sexta.length) out.sexta = [linhaVazia()];
+          if (!out.sabado.length) out.sabado = [linhaVazia()];
+          if (!out.domingo.length) out.domingo = [linhaVazia()];
+          return out;
+        }
+        return { sexta: [linhaVazia()], sabado: [linhaVazia()], domingo: [linhaVazia()] };
+      }
+
+      function readLinhaDia(tr) {
+        return {
+          horaInicio: (tr.querySelector(".hora-inicio") || {}).value || "",
+          horaFim: (tr.querySelector(".hora-fim") || {}).value || "",
+          nome: (tr.querySelector(".nome") || {}).value.trim() || "",
+          congregacao: (tr.querySelector(".congregacao") || {}).value.trim() || "",
+          contato: (tr.querySelector(".contato") || {}).value.trim() || "",
+        };
+      }
+
+      function writeLinhaDia(tr, d) {
+        if (!d) d = linhaVazia();
+        tr.querySelector(".hora-inicio").value = d.horaInicio || "";
+        tr.querySelector(".hora-fim").value = d.horaFim || "";
+        tr.querySelector(".nome").value = d.nome || "";
+        tr.querySelector(".congregacao").value = d.congregacao || "";
+        tr.querySelector(".contato").value = d.contato || "";
+      }
+
+      function addLinhaDia(dia, prefill) {
+        var tbody = tbodies[dia];
+        if (!tbody) return;
+        var node = tpl.content.cloneNode(true);
+        var tr = node.querySelector("tr");
+        tbody.appendChild(tr);
+        if (prefill) writeLinhaDia(tr, prefill);
+        tr.querySelector(".hora-inicio").focus();
+        return tr;
+      }
+
+      function preencherTbodyDia(dia, linhas) {
+        var tbody = tbodies[dia];
+        tbody.innerHTML = "";
+        if (!linhas || !linhas.length) {
+          addLinhaDia(dia, null);
+          return;
+        }
+        for (var i = 0; i < linhas.length; i++) {
+          addLinhaDia(dia, linhas[i]);
+        }
+      }
+
+      function applyPayloadToForm(data) {
+        capitao.value = typeof data.capitao === "string" ? data.capitao : "";
+        var dias = normalizeLinhasParaDias(data.linhas);
+        preencherTbodyDia("sexta", dias.sexta);
+        preencherTbodyDia("sabado", dias.sabado);
+        preencherTbodyDia("domingo", dias.domingo);
+        if (typeof data.etapa === "number" && data.etapa >= 0 && data.etapa <= 3) {
+          showPasso(data.etapa);
+        } else {
+          showPasso(0);
+        }
+      }
+
+      function collectDiasDoForm() {
+        function readTbody(tbody) {
+          var arr = [];
+          tbody.querySelectorAll("tr.linha-dia").forEach(function (tr) {
+            arr.push(readLinhaDia(tr));
+          });
+          return arr.length ? arr : [linhaVazia()];
+        }
+        return {
+          sexta: readTbody(tbodies.sexta),
+          sabado: readTbody(tbodies.sabado),
+          domingo: readTbody(tbodies.domingo),
+        };
+      }
+
+      function collectPayload() {
+        return {
+          capitao: capitao.value.trim(),
+          linhas: collectDiasDoForm(),
+          etapa: etapa,
+        };
+      }
+
+      function showSave(text, kind) {
+        saveMsg.textContent = text || "";
+        saveMsg.className = "save-msg" + (kind ? " " + kind : "");
+        if (kind === "ok") {
+          window.clearTimeout(showSave._t);
+          showSave._t = window.setTimeout(function () {
+            if (saveMsg.classList.contains("ok")) {
+              saveMsg.textContent = "";
+              saveMsg.className = "save-msg";
+            }
+          }, 3500);
+        }
+      }
+
+      function salvarRascunho() {
+        try {
+          window.localStorage.setItem(DRAFT_KEY, JSON.stringify(collectPayload()));
+        } catch (e) {}
+      }
+
+      function agendarRascunho() {
+        window.clearTimeout(rascunhoTimer);
+        rascunhoTimer = window.setTimeout(salvarRascunho, 400);
+      }
+
+      function limparRascunho() {
+        try {
+          window.localStorage.removeItem(DRAFT_KEY);
+        } catch (e) {}
+      }
+
+      function resetFormularioNovoEnvio() {
+        capitao.value = "";
+        preencherTbodyDia("sexta", [linhaVazia()]);
+        preencherTbodyDia("sabado", [linhaVazia()]);
+        preencherTbodyDia("domingo", [linhaVazia()]);
+        limparRascunho();
+        showPasso(0);
+      }
+
+      function enviar() {
+        var payload = collectPayload();
+        delete payload.etapa;
+        var client = getSupabaseClient();
+        var btn = document.getElementById("btn-enviar");
+
+        function fimEnviar() {
+          btn.disabled = false;
+        }
+
+        if (!client) {
+          showSave("Configure url e anonKey em config.js para enviar ao Supabase.", "err");
+          return;
+        }
+
+        btn.disabled = true;
+        client
+          .from(TABLE)
+          .insert([{ capitao: payload.capitao, linhas: payload.linhas }])
+          .then(function (res) {
+            fimEnviar();
+            if (res.error) {
+              showSave("Não foi possível enviar: " + res.error.message, "err");
+              return;
+            }
+            resetFormularioNovoEnvio();
+            showSave("Envio registado. Obrigado.", "ok");
+          });
+      }
+
+      function carregarRascunho() {
+        var raw = window.localStorage.getItem(DRAFT_KEY);
+        if (!raw) return false;
+        try {
+          applyPayloadToForm(JSON.parse(raw));
+          return true;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      initDots();
+      showPasso(0);
+
+      document.getElementById("btn-continuar-0").addEventListener("click", function () {
+        showPasso(1);
+      });
+
+      document.querySelectorAll(".btn-voltar").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          showPasso(etapa - 1);
+        });
+      });
+
+      document.querySelectorAll(".btn-avancar").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          showPasso(etapa + 1);
+        });
+      });
+
+      document.getElementById("btn-enviar").addEventListener("click", enviar);
+
+      document.getElementById("btn-limpar").addEventListener("click", function () {
+        if (!window.confirm("Apagar o rascunho (capitão e todas as tabelas) neste aparelho?")) return;
+        resetFormularioNovoEnvio();
+        showSave("Rascunho limpo.", "ok");
+      });
+
+      document.querySelectorAll(".btn-add-dia").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          addLinhaDia(btn.getAttribute("data-dia"), null);
+        });
+      });
+
+      form.addEventListener("click", function (e) {
+        var rm = e.target.closest(".btn-remove-linha");
+        if (!rm) return;
+        var tr = rm.closest("tr");
+        var tbody = tr && tr.closest("tbody");
+        if (!tr || !tbody) return;
+        tr.remove();
+        if (!tbody.querySelector("tr")) {
+          var dia = DIAS.find(function (d) {
+            return tbodies[d] === tbody;
+          });
+          if (dia) addLinhaDia(dia, null);
+        }
+        agendarRascunho();
+      });
+
+      form.addEventListener("input", agendarRascunho);
+      form.addEventListener("change", agendarRascunho);
+
+      if (!carregarRascunho()) {
+        applyPayloadToForm({ capitao: "", linhas: { sexta: [], sabado: [], domingo: [] } });
+      }
+    })();
+  </script>
+</body>
+</html>

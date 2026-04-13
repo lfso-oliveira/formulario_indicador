@@ -223,7 +223,17 @@
         };
       }
 
-      /** Novo formato: { sexta: [], sabado: [], domingo: [] }; antigo: array de linhas com três dias. */
+      function isListaDeBlocos(arr) {
+        return (
+          Array.isArray(arr) &&
+          arr.length > 0 &&
+          arr[0] &&
+          typeof arr[0] === "object" &&
+          Array.isArray(arr[0].turnos)
+        );
+      }
+
+      /** Cada dia: lista de { nome, turnos } ou lista plana de turnos (antigo). */
       function normalizeLinhasToDias(linhas) {
         if (!linhas) return { sexta: [], sabado: [], domingo: [] };
         if (typeof linhas === "string") {
@@ -251,27 +261,31 @@
         return out;
       }
 
-      function buildTabelaUmDia(titulo, linhas) {
-        var block = document.createElement("div");
-        block.style.marginTop = "0.85rem";
-        var h = document.createElement("h4");
-        h.textContent = titulo;
-        h.style.margin = "0 0 0.45rem";
-        h.style.fontSize = "0.88rem";
-        h.style.fontWeight = "600";
-        h.style.color = "var(--text, #e8eef5)";
-        block.appendChild(h);
-        if (!linhas || !linhas.length) {
-          var empty = document.createElement("p");
-          empty.className = "muted";
-          empty.style.fontSize = "0.82rem";
-          empty.style.margin = "0";
-          empty.textContent = "Sem turnos neste dia.";
-          block.appendChild(empty);
-          return block;
+      function diaParaBlocosParaAdmin(diaVal) {
+        if (!diaVal || !Array.isArray(diaVal) || !diaVal.length) return [];
+        if (isListaDeBlocos(diaVal)) {
+          return diaVal.map(function (b) {
+            var nome = b && b.nome != null ? String(b.nome).trim() : "";
+            var turnos =
+              Array.isArray(b.turnos) && b.turnos.length ? b.turnos.slice() : [];
+            return { nome: nome || "(sem nome)", turnos: turnos };
+          });
         }
+        return [{ nome: "Turnos (formato antigo)", turnos: diaVal.slice() }];
+      }
+
+      function buildTabelaTurnos(turnos) {
         var wrap = document.createElement("div");
         wrap.className = "mini-wrap";
+        if (!turnos || !turnos.length) {
+          var p = document.createElement("p");
+          p.className = "muted";
+          p.style.fontSize = "0.8rem";
+          p.style.margin = "0.25rem 0 0";
+          p.textContent = "Sem linhas neste bloco.";
+          wrap.appendChild(p);
+          return wrap;
+        }
         var table = document.createElement("table");
         table.className = "mini";
         var thead = document.createElement("thead");
@@ -279,8 +293,8 @@
           "<tr><th>Horário</th><th>Nome</th><th>Congregação</th><th>Contato</th></tr>";
         table.appendChild(thead);
         var tb = document.createElement("tbody");
-        for (var i = 0; i < linhas.length; i++) {
-          var c = linhas[i] || {};
+        for (var i = 0; i < turnos.length; i++) {
+          var c = turnos[i] || {};
           var tr = document.createElement("tr");
           tr.innerHTML =
             "<td>" +
@@ -296,16 +310,53 @@
         }
         table.appendChild(tb);
         wrap.appendChild(table);
-        block.appendChild(wrap);
+        return wrap;
+      }
+
+      function buildDiaComBlocos(tituloDia, diaVal) {
+        var block = document.createElement("div");
+        block.style.marginTop = "0.85rem";
+        var h = document.createElement("h4");
+        h.textContent = tituloDia;
+        h.style.margin = "0 0 0.5rem";
+        h.style.fontSize = "0.88rem";
+        h.style.fontWeight = "600";
+        h.style.color = "var(--text, #e8eef5)";
+        block.appendChild(h);
+        var blocos = diaParaBlocosParaAdmin(diaVal);
+        if (!blocos.length) {
+          var empty = document.createElement("p");
+          empty.className = "muted";
+          empty.style.fontSize = "0.82rem";
+          empty.textContent = "Sem dados neste dia.";
+          block.appendChild(empty);
+          return block;
+        }
+        for (var b = 0; b < blocos.length; b++) {
+          var bl = blocos[b];
+          var sub = document.createElement("div");
+          sub.style.marginTop = "0.65rem";
+          sub.style.paddingLeft = "0.35rem";
+          sub.style.borderLeft = "2px solid var(--accent, #3d8bfd)";
+          var h5 = document.createElement("h5");
+          h5.textContent = "Bloco: " + (bl.nome || "—");
+          h5.style.margin = "0 0 0.4rem";
+          h5.style.fontSize = "0.8rem";
+          h5.style.fontWeight = "600";
+          h5.style.color = "var(--muted, #8b9cb3)";
+          sub.appendChild(h5);
+          sub.appendChild(buildTabelaTurnos(bl.turnos));
+          block.appendChild(sub);
+        }
         return block;
       }
 
       function renderLinhas(linhas) {
         var dias = normalizeLinhasToDias(linhas);
         var root = document.createElement("div");
-        root.appendChild(buildTabelaUmDia("Sexta-feira", dias.sexta));
-        root.appendChild(buildTabelaUmDia("Sábado", dias.sabado));
-        root.appendChild(buildTabelaUmDia("Domingo", dias.domingo));
+        root.appendChild(buildDiaComBlocos("Sexta-feira", dias.sexta));
+        root.appendChild(buildDiaComBlocos("Sábado", dias.sabado));
+        root.appendChild(buildDiaComBlocos("Domingo", dias.domingo));
         return root;
       }
 

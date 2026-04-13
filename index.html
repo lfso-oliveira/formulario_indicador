@@ -281,6 +281,45 @@
       margin-bottom: 0.75rem;
     }
 
+    .wrap-blocos-dia {
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    .bloco-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1rem 1.1rem;
+    }
+
+    .bloco-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 0.65rem 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .bloco-nome-field {
+      flex: 1 1 200px;
+      min-width: 0;
+    }
+
+    .bloco-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.65rem;
+    }
+
+    .btn-sm {
+      min-height: 2.4rem;
+      padding: 0.45rem 0.85rem;
+      font-size: 0.82rem;
+    }
+
     .save-msg {
       font-size: 0.875rem;
       color: var(--muted);
@@ -362,7 +401,7 @@
 <body>
   <div class="wrap">
     <h1>Planejamento de turnos</h1>
-    <p class="intro">Preencha por etapas: primeiro o capitão, depois uma tabela por dia (sexta, sábado e domingo).</p>
+    <p class="intro">Por etapas: capitão e, em cada dia, <strong>blocos</strong> com nome (área ou equipa) e a mesma tabela de turnos/indicadores em cada bloco.</p>
 
     <form id="form-turnos" novalidate>
       <div class="card">
@@ -387,23 +426,10 @@
 
         <section class="passo" data-passo="1" id="passo-1" hidden>
           <h2 class="passo-titulo">Sexta-feira</h2>
-          <p class="passo-desc">Horários e indicadores só deste dia.</p>
+          <p class="passo-desc">Crie blocos (ex.: terrenos ou salas), dê um nome a cada um e preencha os turnos com indicadores.</p>
+          <div id="wrap-blocos-sexta" class="wrap-blocos-dia" data-dia="sexta"></div>
           <div class="toolbar-dia">
-            <button type="button" class="btn btn-primary btn-add-dia" data-dia="sexta">+ Turno (sexta)</button>
-          </div>
-          <div class="table-wrap">
-            <table class="tabela-dia" aria-label="Turnos de sexta-feira">
-              <thead>
-                <tr>
-                  <th class="col-time">Horário</th>
-                  <th>Nome</th>
-                  <th>Congregação</th>
-                  <th>Contato</th>
-                  <th class="col-acoes">Ações</th>
-                </tr>
-              </thead>
-              <tbody id="tbody-sexta"></tbody>
-            </table>
+            <button type="button" class="btn btn-ghost btn-novo-bloco" data-dia="sexta">+ Novo bloco</button>
           </div>
           <div class="nav-passos">
             <button type="button" class="btn btn-ghost btn-voltar">← Anterior</button>
@@ -414,23 +440,10 @@
 
         <section class="passo" data-passo="2" id="passo-2" hidden>
           <h2 class="passo-titulo">Sábado</h2>
-          <p class="passo-desc">Horários e indicadores só do sábado.</p>
+          <p class="passo-desc">Blocos com nome e tabela de indicadores por bloco.</p>
+          <div id="wrap-blocos-sabado" class="wrap-blocos-dia" data-dia="sabado"></div>
           <div class="toolbar-dia">
-            <button type="button" class="btn btn-primary btn-add-dia" data-dia="sabado">+ Turno (sábado)</button>
-          </div>
-          <div class="table-wrap">
-            <table class="tabela-dia" aria-label="Turnos de sábado">
-              <thead>
-                <tr>
-                  <th class="col-time">Horário</th>
-                  <th>Nome</th>
-                  <th>Congregação</th>
-                  <th>Contato</th>
-                  <th class="col-acoes">Ações</th>
-                </tr>
-              </thead>
-              <tbody id="tbody-sabado"></tbody>
-            </table>
+            <button type="button" class="btn btn-ghost btn-novo-bloco" data-dia="sabado">+ Novo bloco</button>
           </div>
           <div class="nav-passos">
             <button type="button" class="btn btn-ghost btn-voltar">← Anterior</button>
@@ -441,23 +454,10 @@
 
         <section class="passo" data-passo="3" id="passo-3" hidden>
           <h2 class="passo-titulo">Domingo</h2>
-          <p class="passo-desc">Último dia. Depois pode enviar.</p>
+          <p class="passo-desc">Último dia: blocos e turnos. Depois envie.</p>
+          <div id="wrap-blocos-domingo" class="wrap-blocos-dia" data-dia="domingo"></div>
           <div class="toolbar-dia">
-            <button type="button" class="btn btn-primary btn-add-dia" data-dia="domingo">+ Turno (domingo)</button>
-          </div>
-          <div class="table-wrap">
-            <table class="tabela-dia" aria-label="Turnos de domingo">
-              <thead>
-                <tr>
-                  <th class="col-time">Horário</th>
-                  <th>Nome</th>
-                  <th>Congregação</th>
-                  <th>Contato</th>
-                  <th class="col-acoes">Ações</th>
-                </tr>
-              </thead>
-              <tbody id="tbody-domingo"></tbody>
-            </table>
+            <button type="button" class="btn btn-ghost btn-novo-bloco" data-dia="domingo">+ Novo bloco</button>
           </div>
           <div class="nav-passos">
             <button type="button" class="btn btn-ghost btn-voltar">← Anterior</button>
@@ -470,6 +470,35 @@
       </div>
     </form>
   </div>
+
+  <template id="tpl-bloco-dia">
+    <section class="bloco-card">
+      <div class="bloco-head">
+        <div class="bloco-nome-field">
+          <label>Nome do bloco</label>
+          <input type="text" class="nome-bloco" placeholder="Ex.: Terreno norte, Salão principal…" />
+        </div>
+        <button type="button" class="btn btn-danger btn-sm btn-remove-bloco">Remover bloco</button>
+      </div>
+      <div class="bloco-toolbar">
+        <button type="button" class="btn btn-primary btn-sm btn-add-turno-bloco">+ Turno neste bloco</button>
+      </div>
+      <div class="table-wrap">
+        <table class="tabela-dia" aria-label="Turnos do bloco">
+          <thead>
+            <tr>
+              <th class="col-time">Horário</th>
+              <th>Nome</th>
+              <th>Congregação</th>
+              <th>Contato</th>
+              <th class="col-acoes">Ações</th>
+            </tr>
+          </thead>
+          <tbody class="tbody-turnos-bloco"></tbody>
+        </table>
+      </div>
+    </section>
+  </template>
 
   <template id="tpl-linha-dia">
     <tr class="linha-dia">
@@ -499,9 +528,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8/dist/umd/supabase.min.js"></script>
   <script>
     (function () {
-      var DRAFT_KEY = "indicadores-rascunho-v4-etapas";
+      var DRAFT_KEY = "indicadores-rascunho-v5-blocos";
       var TABLE = "indicadores_envios";
-      var DIAS = ["sexta", "sabado", "domingo"];
       var TITULOS_ETAPA = [
         "Passo 1 de 4 — Capitão",
         "Passo 2 de 4 — Sexta-feira",
@@ -515,14 +543,15 @@
       var stepLabel = document.getElementById("step-label");
       var stepsDots = document.getElementById("steps-dots");
       var tpl = document.getElementById("tpl-linha-dia");
+      var tplBloco = document.getElementById("tpl-bloco-dia");
       var supabaseClient = null;
       var rascunhoTimer = null;
       var etapa = 0;
 
-      var tbodies = {
-        sexta: document.getElementById("tbody-sexta"),
-        sabado: document.getElementById("tbody-sabado"),
-        domingo: document.getElementById("tbody-domingo"),
+      var wrapBlocos = {
+        sexta: document.getElementById("wrap-blocos-sexta"),
+        sabado: document.getElementById("wrap-blocos-sabado"),
+        domingo: document.getElementById("wrap-blocos-domingo"),
       };
 
       function getSupabaseClient() {
@@ -566,46 +595,110 @@
         return { horaInicio: "", horaFim: "", nome: "", congregacao: "", contato: "" };
       }
 
-      /** Formato novo: { sexta: [], sabado: [], domingo: [] } */
+      function blocoVazio() {
+        return { nome: "", turnos: [linhaVazia()] };
+      }
+
+      function emptyDiasComBlocos() {
+        return {
+          sexta: [blocoVazio()],
+          sabado: [blocoVazio()],
+          domingo: [blocoVazio()],
+        };
+      }
+
+      function isListaDeBlocos(arr) {
+        return (
+          Array.isArray(arr) &&
+          arr.length > 0 &&
+          arr[0] &&
+          typeof arr[0] === "object" &&
+          Array.isArray(arr[0].turnos)
+        );
+      }
+
+      /** Um dia = array de { nome, turnos: [linha…] } */
+      function normalizeDiaParaBlocos(diaVal) {
+        if (!diaVal || !Array.isArray(diaVal) || diaVal.length === 0) {
+          return [blocoVazio()];
+        }
+        if (isListaDeBlocos(diaVal)) {
+          return diaVal.map(function (b) {
+            var nome = b && b.nome != null ? String(b.nome) : "";
+            var turnos =
+              Array.isArray(b.turnos) && b.turnos.length
+                ? b.turnos.map(function (t) {
+                    return Object.assign(linhaVazia(), t);
+                  })
+                : [linhaVazia()];
+            return { nome: nome, turnos: turnos };
+          });
+        }
+        var flat = diaVal.map(function (t) {
+          return Object.assign(linhaVazia(), t);
+        });
+        return [{ nome: "", turnos: flat.length ? flat : [linhaVazia()] }];
+      }
+
+      function migrateLinhaMatriz(row) {
+        if (!row || typeof row !== "object") {
+          return { sexta: linhaVazia(), sabado: linhaVazia(), domingo: linhaVazia() };
+        }
+        if (
+          row.sexta &&
+          typeof row.sexta === "object" &&
+          ("horaInicio" in row.sexta || "horaFim" in row.sexta || (row.sexta.nome && String(row.sexta.nome)))
+        ) {
+          return {
+            sexta: Object.assign(linhaVazia(), row.sexta),
+            sabado: Object.assign(linhaVazia(), row.sabado || {}),
+            domingo: Object.assign(linhaVazia(), row.domingo || {}),
+          };
+        }
+        var hi = row.horaInicio || "";
+        var hf = row.horaFim || "";
+        return {
+          sexta: Object.assign({ horaInicio: hi, horaFim: hf }, linhaVazia(), row.sexta || {}),
+          sabado: Object.assign({ horaInicio: hi, horaFim: hf }, linhaVazia(), row.sabado || {}),
+          domingo: Object.assign({ horaInicio: hi, horaFim: hf }, linhaVazia(), row.domingo || {}),
+        };
+      }
+
+      /**
+       * linhas: { sexta: [ { nome, turnos } ], sabado, domingo }
+       * ou formato antigo: lista de linhas por dia (só turnos) ou matriz por linha.
+       */
       function normalizeLinhasParaDias(raw) {
-        if (!raw) return { sexta: [linhaVazia()], sabado: [linhaVazia()], domingo: [linhaVazia()] };
+        if (!raw) return emptyDiasComBlocos();
         if (typeof raw === "string") {
           try {
             raw = JSON.parse(raw);
           } catch (e) {
-            return { sexta: [linhaVazia()], sabado: [linhaVazia()], domingo: [linhaVazia()] };
+            return emptyDiasComBlocos();
           }
         }
-        if (raw && typeof raw === "object" && !Array.isArray(raw) && Array.isArray(raw.sexta)) {
-          var o = {
-            sexta: raw.sexta.length ? raw.sexta.slice() : [linhaVazia()],
-            sabado: raw.sabado && raw.sabado.length ? raw.sabado.slice() : [linhaVazia()],
-            domingo: raw.domingo && raw.domingo.length ? raw.domingo.slice() : [linhaVazia()],
+        if (raw && typeof raw === "object" && !Array.isArray(raw) && raw.sexta !== undefined) {
+          return {
+            sexta: normalizeDiaParaBlocos(raw.sexta),
+            sabado: normalizeDiaParaBlocos(raw.sabado),
+            domingo: normalizeDiaParaBlocos(raw.domingo),
           };
-          return o;
         }
         if (Array.isArray(raw)) {
-          var out = { sexta: [], sabado: [], domingo: [] };
+          var ac = { sexta: [], sabado: [], domingo: [] };
           for (var i = 0; i < raw.length; i++) {
-            var row = raw[i] || {};
-            if (row.sexta && ("horaInicio" in row.sexta || "horaFim" in row.sexta)) {
-              out.sexta.push(Object.assign(linhaVazia(), row.sexta));
-              out.sabado.push(Object.assign(linhaVazia(), row.sabado || {}));
-              out.domingo.push(Object.assign(linhaVazia(), row.domingo || {}));
-            } else {
-              var hi = row.horaInicio || "";
-              var hf = row.horaFim || "";
-              out.sexta.push(Object.assign({ horaInicio: hi, horaFim: hf }, linhaVazia(), row.sexta || {}));
-              out.sabado.push(Object.assign({ horaInicio: hi, horaFim: hf }, linhaVazia(), row.sabado || {}));
-              out.domingo.push(Object.assign({ horaInicio: hi, horaFim: hf }, linhaVazia(), row.domingo || {}));
-            }
+            var m = migrateLinhaMatriz(raw[i] || {});
+            ac.sexta.push(m.sexta);
+            ac.sabado.push(m.sabado);
+            ac.domingo.push(m.domingo);
           }
-          if (!out.sexta.length) out.sexta = [linhaVazia()];
-          if (!out.sabado.length) out.sabado = [linhaVazia()];
-          if (!out.domingo.length) out.domingo = [linhaVazia()];
-          return out;
+          return {
+            sexta: normalizeDiaParaBlocos(ac.sexta),
+            sabado: normalizeDiaParaBlocos(ac.sabado),
+            domingo: normalizeDiaParaBlocos(ac.domingo),
+          };
         }
-        return { sexta: [linhaVazia()], sabado: [linhaVazia()], domingo: [linhaVazia()] };
+        return emptyDiasComBlocos();
       }
 
       function readLinhaDia(tr) {
@@ -627,35 +720,54 @@
         tr.querySelector(".contato").value = d.contato || "";
       }
 
-      function addLinhaDia(dia, prefill) {
-        var tbody = tbodies[dia];
-        if (!tbody) return;
+      function addLinhaEmTbody(tbody, prefill) {
+        if (!tbody) return null;
         var node = tpl.content.cloneNode(true);
         var tr = node.querySelector("tr");
         tbody.appendChild(tr);
         if (prefill) writeLinhaDia(tr, prefill);
-        tr.querySelector(".hora-inicio").focus();
+        var hi = tr.querySelector(".hora-inicio");
+        if (hi) hi.focus();
         return tr;
       }
 
-      function preencherTbodyDia(dia, linhas) {
-        var tbody = tbodies[dia];
+      function addBlocoNoDia(dia, dadosBloco) {
+        var wrap = wrapBlocos[dia];
+        if (!wrap || !tplBloco) return null;
+        if (!dadosBloco) dadosBloco = blocoVazio();
+        var node = tplBloco.content.cloneNode(true);
+        var card = node.querySelector(".bloco-card");
+        wrap.appendChild(card);
+        card.querySelector(".nome-bloco").value =
+          dadosBloco.nome != null ? String(dadosBloco.nome) : "";
+        var tbody = card.querySelector(".tbody-turnos-bloco");
+        var turnos =
+          Array.isArray(dadosBloco.turnos) && dadosBloco.turnos.length
+            ? dadosBloco.turnos
+            : [linhaVazia()];
         tbody.innerHTML = "";
-        if (!linhas || !linhas.length) {
-          addLinhaDia(dia, null);
-          return;
+        for (var i = 0; i < turnos.length; i++) {
+          addLinhaEmTbody(tbody, turnos[i]);
         }
-        for (var i = 0; i < linhas.length; i++) {
-          addLinhaDia(dia, linhas[i]);
+        return card;
+      }
+
+      function preencherDiaComBlocos(dia, blocos) {
+        var wrap = wrapBlocos[dia];
+        if (!wrap) return;
+        wrap.innerHTML = "";
+        var list = normalizeDiaParaBlocos(blocos);
+        for (var j = 0; j < list.length; j++) {
+          addBlocoNoDia(dia, list[j]);
         }
       }
 
       function applyPayloadToForm(data) {
         capitao.value = typeof data.capitao === "string" ? data.capitao : "";
         var dias = normalizeLinhasParaDias(data.linhas);
-        preencherTbodyDia("sexta", dias.sexta);
-        preencherTbodyDia("sabado", dias.sabado);
-        preencherTbodyDia("domingo", dias.domingo);
+        preencherDiaComBlocos("sexta", dias.sexta);
+        preencherDiaComBlocos("sabado", dias.sabado);
+        preencherDiaComBlocos("domingo", dias.domingo);
         if (typeof data.etapa === "number" && data.etapa >= 0 && data.etapa <= 3) {
           showPasso(data.etapa);
         } else {
@@ -663,18 +775,27 @@
         }
       }
 
-      function collectDiasDoForm() {
-        function readTbody(tbody) {
-          var arr = [];
-          tbody.querySelectorAll("tr.linha-dia").forEach(function (tr) {
-            arr.push(readLinhaDia(tr));
+      function collectBlocosDoDia(dia) {
+        var wrap = wrapBlocos[dia];
+        var out = [];
+        wrap.querySelectorAll(".bloco-card").forEach(function (card) {
+          var nome = ((card.querySelector(".nome-bloco") || {}).value || "").trim();
+          var turnos = [];
+          card.querySelectorAll(".tbody-turnos-bloco tr.linha-dia").forEach(function (tr) {
+            turnos.push(readLinhaDia(tr));
           });
-          return arr.length ? arr : [linhaVazia()];
-        }
+          if (!turnos.length) turnos = [linhaVazia()];
+          out.push({ nome: nome, turnos: turnos });
+        });
+        if (!out.length) out.push(blocoVazio());
+        return out;
+      }
+
+      function collectDiasDoForm() {
         return {
-          sexta: readTbody(tbodies.sexta),
-          sabado: readTbody(tbodies.sabado),
-          domingo: readTbody(tbodies.domingo),
+          sexta: collectBlocosDoDia("sexta"),
+          sabado: collectBlocosDoDia("sabado"),
+          domingo: collectBlocosDoDia("domingo"),
         };
       }
 
@@ -719,9 +840,9 @@
 
       function resetFormularioNovoEnvio() {
         capitao.value = "";
-        preencherTbodyDia("sexta", [linhaVazia()]);
-        preencherTbodyDia("sabado", [linhaVazia()]);
-        preencherTbodyDia("domingo", [linhaVazia()]);
+        preencherDiaComBlocos("sexta", [blocoVazio()]);
+        preencherDiaComBlocos("sabado", [blocoVazio()]);
+        preencherDiaComBlocos("domingo", [blocoVazio()]);
         limparRascunho();
         showPasso(0);
       }
@@ -794,24 +915,45 @@
         showSave("Rascunho limpo.", "ok");
       });
 
-      document.querySelectorAll(".btn-add-dia").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          addLinhaDia(btn.getAttribute("data-dia"), null);
-        });
-      });
-
       form.addEventListener("click", function (e) {
+        var novo = e.target.closest(".btn-novo-bloco");
+        if (novo) {
+          var diaN = novo.getAttribute("data-dia");
+          if (diaN) addBlocoNoDia(diaN, blocoVazio());
+          agendarRascunho();
+          return;
+        }
+
+        var addTurno = e.target.closest(".btn-add-turno-bloco");
+        if (addTurno) {
+          var card = addTurno.closest(".bloco-card");
+          if (card) addLinhaEmTbody(card.querySelector(".tbody-turnos-bloco"), null);
+          agendarRascunho();
+          return;
+        }
+
+        var rmBloco = e.target.closest(".btn-remove-bloco");
+        if (rmBloco) {
+          var cardB = rmBloco.closest(".bloco-card");
+          var wrapB = cardB && cardB.closest(".wrap-blocos-dia");
+          if (!cardB || !wrapB) return;
+          if (wrapB.querySelectorAll(".bloco-card").length <= 1) {
+            window.alert("Tem de existir pelo menos um bloco neste dia.");
+            return;
+          }
+          cardB.remove();
+          agendarRascunho();
+          return;
+        }
+
         var rm = e.target.closest(".btn-remove-linha");
         if (!rm) return;
         var tr = rm.closest("tr");
-        var tbody = tr && tr.closest("tbody");
+        var tbody = tr && tr.closest(".tbody-turnos-bloco");
         if (!tr || !tbody) return;
         tr.remove();
-        if (!tbody.querySelector("tr")) {
-          var dia = DIAS.find(function (d) {
-            return tbodies[d] === tbody;
-          });
-          if (dia) addLinhaDia(dia, null);
+        if (!tbody.querySelector("tr.linha-dia")) {
+          addLinhaEmTbody(tbody, null);
         }
         agendarRascunho();
       });
@@ -820,7 +962,7 @@
       form.addEventListener("change", agendarRascunho);
 
       if (!carregarRascunho()) {
-        applyPayloadToForm({ capitao: "", linhas: { sexta: [], sabado: [], domingo: [] } });
+        applyPayloadToForm({ capitao: "", linhas: emptyDiasComBlocos() });
       }
     })();
   </script>

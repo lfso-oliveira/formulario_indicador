@@ -1,0 +1,11 @@
+{
+  "name": "indicadores",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "db:ensure": "node scripts/ensure-schema.mjs"
+  },
+  "dependencies": {
+    "pg": "^8.13.1"
+  }
+}

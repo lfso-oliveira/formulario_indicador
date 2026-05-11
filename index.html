@@ -869,7 +869,13 @@
           .then(function (res) {
             fimEnviar();
             if (res.error) {
-              showSave("Não foi possível enviar: " + res.error.message, "err");
+              var em = res.error.message || "";
+              var hint = "";
+              if (/does not exist|indicadores_envios|PGRST205|schema cache/i.test(em)) {
+                hint =
+                  " Crie a tabela no projeto (SQL Editor com schema.sql ou na máquina: DATABASE_URL=… npm run db:ensure).";
+              }
+              showSave("Não foi possível enviar: " + em + hint, "err");
               return;
             }
             resetFormularioNovoEnvio();

@@ -1,6 +1,7 @@
 -- =============================================================================
 -- Schema completo: indicadores (Supabase / PostgreSQL)
 -- Cole no SQL Editor e execute de uma vez (ou por blocos).
+-- Alternativa local: `DATABASE_URL=... npm run db:ensure` (ver scripts/ensure-schema.mjs).
 --
 -- Depois de rodar: formulário e /admin/ usam a mesma chave "anon" (config.js).
 -- A política de SELECT abaixo permite listar envios no admin: qualquer um com
